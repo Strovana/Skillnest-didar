@@ -4,6 +4,16 @@
 
 ![SkillNest](https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80)
 
+## Live Links
+
+| | URL |
+|--|--|
+| **React App** | https://skillnest-didar.vercel.app |
+| **Backend API** | https://skillnest-didar.onrender.com |
+| **WordPress Site** | https://skillnestdidar.wordpress.com |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -28,6 +38,7 @@ skillnest/
 │   └── server.js       # Entry point
 └── frontend/
     └── src/
+        ├── api.js      # Axios instance with auth interceptors
         ├── components/ # Navbar, CourseCard, Loader
         ├── context/    # AuthContext (JWT state)
         └── pages/      # Landing, Login, Register, Courses,
@@ -40,128 +51,80 @@ skillnest/
 
 ### Prerequisites
 - Node.js 18+
-- MongoDB Atlas account (free tier works)
+- MongoDB Atlas account (free tier is fine)
 
-### 1. Clone & Install
+### 1. Clone & install
 
 ```bash
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend
-npm install
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
-### 2. Configure Backend
+### 2. Configure the backend
 
 ```bash
 cd backend
 cp .env.example .env
+# Fill in MONGO_URI, JWT_SECRET, CLIENT_URL
 ```
 
-Edit `.env`:
-```
-PORT=5000
-MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/skillnest
-JWT_SECRET=your_random_secret_string
-CLIENT_URL=http://localhost:5173
-```
-
-### 3. Seed the Database
+### 3. Seed the database
 
 ```bash
 cd backend
 node seed.js
 ```
 
-This creates:
-- **Admin:** `admin@skillnest.com` / `admin123`
-- **Student:** `student@skillnest.com` / `student123`
-- **6 sample courses**
+Creates 6 sample courses and two demo accounts.
 
-### 4. Run Both Servers
+### 4. Start both servers
 
 ```bash
-# Terminal 1 - Backend
-cd backend
-npm run dev
+# Terminal 1
+cd backend && npm run dev
 
-# Terminal 2 - Frontend
-cd frontend
-npm run dev
+# Terminal 2
+cd frontend && npm run dev
 ```
 
-Visit: **http://localhost:5173**
+Open **http://localhost:5173**
 
 ---
 
 ## API Endpoints
 
 ### Auth
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Get current user |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | `/api/auth/register` | Public | Create account |
+| POST | `/api/auth/login` | Public | Log in, returns JWT |
+| GET | `/api/auth/me` | Bearer | Get current user |
 
 ### Courses
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
 | GET | `/api/courses` | Public | List all courses |
-| GET | `/api/courses/:id` | Public | Single course |
+| GET | `/api/courses/:id` | Public | Single course detail |
 | POST | `/api/courses` | Admin | Create course |
 | PUT | `/api/courses/:id` | Admin | Update course |
 | DELETE | `/api/courses/:id` | Admin | Delete course |
-| POST | `/api/courses/:id/enroll` | User | Enroll in course |
-| GET | `/api/courses/admin/all` | Admin | All courses (incl. drafts) |
+| POST | `/api/courses/:id/enroll` | Bearer | Enroll in course |
+| GET | `/api/courses/admin/all` | Admin | All courses incl. drafts |
 
 ### Users
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/users/dashboard` | User | Dashboard data |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/api/users/dashboard` | Bearer | Enrolled courses + profile |
 | GET | `/api/users` | Admin | All users |
-| GET | `/api/users/stats` | Admin | User statistics |
-
----
-
-## Deployment
-
-### Backend → Render
-1. Push code to GitHub
-2. Create new **Web Service** on [render.com](https://render.com)
-3. Set **Root Directory** → `backend`
-4. **Build Command:** `npm install`
-5. **Start Command:** `npm start`
-6. Add environment variables (MONGO_URI, JWT_SECRET, CLIENT_URL)
-
-### Frontend → Vercel
-1. Create new project on [vercel.com](https://vercel.com)
-2. Set **Root Directory** → `frontend`
-3. Add environment variable:
-   ```
-   VITE_API_URL=https://your-render-backend.onrender.com
-   ```
-4. Update `vite.config.js` proxy target to your Render URL for production
+| GET | `/api/users/stats` | Admin | User counts |
 
 ---
 
 ## Features
 
-- **JWT Authentication** — Secure register/login with token-based sessions
-- **Role-based Access** — Student and Admin roles with protected routes
-- **Course Catalog** — Browse, search, and filter courses by category/level
-- **Enrollment System** — One-click enroll with dashboard tracking
-- **Admin CRUD** — Full create/edit/delete course management
-- **Responsive Design** — Mobile-first dark-themed UI
-
----
-
-## Submission Details
-
-- **GitHub Repo:** _your link here_
-- **Live Frontend:** _your Vercel URL_
-- **Live Backend:** _your Render URL_
-- **Admin Login:** `admin@skillnest.com` / `admin123`
-- **Student Login:** `student@skillnest.com` / `student123`
+- JWT Authentication — register, login, persistent sessions
+- Role-based access — Student and Admin, enforced server-side
+- Course catalog — search by name, filter by category and level
+- One-click enrollment — tracked in user dashboard
+- Admin CRUD — create, edit, delete courses
+- Responsive dark UI — mobile-first with Tailwind CSS
